@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSplit – Say Goodbye to Wi-Fi Complaints!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-purple: #6c5ce7;
+            --primary-blue: #0984e3;
+            --primary-pink: #fd79a8;
+            --dark-bg: #0a0e27;
+            --dark-card: #1a1f3a;
+            --text-light: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(253, 121, 168, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Navigation */
+        header {
+            position: relative;
+            z-index: 100;
+            padding: 1.5rem 0;
+            background: rgba(26, 31, 58, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-1);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--gradient-1);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 10;
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        section > p {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Services Grid */
+        .service-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service {
+            background: var(--dark-card);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .service:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .service:hover::before {
+            opacity: 0.1;
+        }
+
+        .service img {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-1);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .service h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .service p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .service .button {
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Pricing Cards */
+        .pricing-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-plan {
+            background: var(--dark-card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-plan:nth-child(2) {
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .pricing-plan:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .pricing-plan:nth-child(2):hover {
+            transform: translateY(-10px) scale(1.07);
+        }
+
+        .pricing-plan h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-plan ul {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-plan ul li {
+            padding: 0.8rem 0;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .pricing-plan ul li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Testimonials */
+        .testimonial-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial {
+            background: var(--dark-card);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(102, 126, 234, 0.3);
+            font-family: serif;
+        }
+
+        .testimonial:hover {
+            transform: translateY(-5px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .testimonial p {
+            font-style: italic;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .testimonial h3 {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .testimonial h4 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            background: var(--dark-card);
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            margin-top: 5rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            transform: scale(1.1);
+        }
+
+        footer > p {
+            text-align: center;
+            color: var(--text-muted);
+            padding-top: 2rem;
+            border-top: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .service-container,
+            .pricing-container,
+            .testimonial-container {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-plan:nth-child(2) {
+                transform: scale(1);
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <nav>
+            <div class="logo">NetSplit</div>
+            <ul class="nav-links">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="cta">
+                <a href="#get-started" class="button">Get Started</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Say Goodbye to Wi-Fi Complaints!</h1>
+        <p>SaaS-based solution leveraging AI to improve internet performance with an intuitive monitoring system.</p>
+        <a href="#services" class="button">Learn More</a>
+    </div>
+
+    <section id="services" class="fade-in">
+        <h2>What Services We Offer?</h2>
+        <p>All-in-one solution, jack of all trades, master of ALL!</p>
+        <div class="service-container">
+            <div class="service">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+                <h3>Smart Bandwidth Sharing</h3>
+                <p>Prevents individual users from monopolizing bandwidth; allocates more to high-demand users.</p>
+                <a href="#read-more" class="button">Read More</a>
+            </div>
+            <div class="service">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                <h3>Application Prioritization</h3>
+                <p>AI automatically identifies and prioritizes sensitive traffic (e.g., video conferencing) over less critical applications.</p>
+                <a href="#read-more" class="button">Read More</a>
+            </div>
+            <div class="service">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+                <h3>User Prioritization</h3>
+                <p>Prioritizing different groups of users over others (e.g., teachers would have better access compared to students in the classroom).</p>
+                <a href="#read-more" class="button">Read More</a>
+            </div>
+            <div class="service">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+                <h3>Reducing Latency</h3>
+                <p>Using advanced networking techniques to ensure smooth, low-latency connections, ideal for modern applications such as online meetings.</p>
+                <a href="#read-more" class="button">Read More</a>
+            </div>
+            <div class="service">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                <h3>Quality Detection</h3>
+                <p>Advanced monitoring tracks speed, latency, and real user experience—such as Zoom call quality.</p>
+                <a href="#read-more" class="button">Read More</a>
+            </div>
+            <div class="service">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                <h3>Dashboard on Demand</h3>
+                <p>AI dashboard instantly highlights affected users and key details.</p>
+                <a href="#read-more" class="button">Read More</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="fade-in">
+        <h2>Choose The Best Pricing</h2>
+        <p>Flexible, dynamic pricing based on the type of usage.</p>
+        <div class="pricing-container">
+            <div class="pricing-plan">
+                <h3>Standard</h3>
+                <ul>
+                    <li>Smart Bandwidth Sharing</li>
+                    <li>Latency Reduction</li>
+                    <li>Application Prioritization</li>
+                    <li>User Prioritization</li>
+                    <li>Advanced Monitoring</li>
+                </ul>
+                <a href="#get-started" class="button">Get Started</a>
+            </div>
+            <div class="pricing-plan">
+                <h3>Premium</h3>
+                <ul>
+                    <li>Standard Plan +</li>
+                    <li>Network Separation</li>
+                    <li>AI Troubleshooting</li>
+                    <li>Agentic Network Management</li>
+                    <li>Network Performance Logs</li>
+                </ul>
+                <a href="#get-started" class="button">Get Started</a>
+            </div>
+            <div class="pricing-plan">
+                <h3>Premium Plus</h3>
+                <ul>
+                    <li>Initial Setup & Benchmarking</li>
+                    <li>Remote Troubleshooting</li>
+                    <li>24/7 Technical Support</li>
+                    <li>Security & Privacy</li>
+                    <li>ACL</li>
+                </ul>
+                <a href="#get-started" class="button">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="fade-in">
+        <h2>What Experts and Managers Say About Wi-Fi?</h2>
+        <div class="testimonial-container">
+            <div class="testimonial">
+                <p>"Guests don't care if their lights don't work, but if the Wi-Fi is slow, they'll never come back!"</p>
+                <h3>Lizzie Rodriguez</h3>
+                <h4>COO of SB Hotel Collection</h4>
+            </div>
+            <div class="testimonial">
+                <p>"We're trying to make Wi-Fi the last problem for the property."</p>
+                <h3>Innal Onur</h3>
+                <h4>Director of IT @Ritz Carlton</h4>
+            </div>
+            <div class="testimonial">
+                <p>"If we had a clear way to see what's actually causing the problem when the internet is slow, it would be a total game-changer."</p>
+                <h3>Paul Avolio</h3>
+                <h4>MSP Founder</h4>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-logo">NetSplit</div>
+            <div class="footer-links">
+                <a href="#services">Services</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-social">
+                <a href="#facebook">📘</a>
+                <a href="#twitter">🐦</a>
+                <a href="#linkedin">💼</a>
+            </div>
+        </div>
+        <p>&copy; 2024 NetSplit. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Scroll animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.fade-in');
+            const windowHeight = window.innerHeight;
+
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize
+        createParticles();
+        window.addEventListener('scroll', handleScrollAnimations);
+        handleScrollAnimations(); // Check on load
+    </script>
+</body>
+</html>
+
